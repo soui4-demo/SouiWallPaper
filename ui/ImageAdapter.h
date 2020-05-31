@@ -3,6 +3,7 @@
 
 class CImageAdapter : public SAdapterBase
 {
+	enum {kMaxCache=20};
 public:
 	CImageAdapter(void);
 	~CImageAdapter(void);
@@ -23,10 +24,12 @@ private:
 		string uriThumb;
 		string uriBig;
 	};
-	typedef map<string,CAutoRefPtr<IBitmap> > URL2IMGMAP;
+	typedef map<string,SAutoRefPtr<IBitmap> > URL2IMGMAP;
 	typedef vector<IMGINFO> IMGS;
 	typedef map<int,IMGS * > DATAMAP;
+	typedef map<uint64_t,string> IMGTSMAP;
 	DATAMAP m_dataMap;
 	URL2IMGMAP m_imgMap;
 	int    m_category;
+	IMGTSMAP	m_imgTsMap;
 };

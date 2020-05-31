@@ -11,7 +11,7 @@ SEVENT_BEGIN(EventDownloadFinish,EVT_DOWNLOAD_FINISH)
 	std::string data;
 	long   type;
 	long   catetory;
-	CAutoRefPtr<IBitmap> pImg;
+	SAutoRefPtr<IBitmap> pImg;
 SEVENT_END()
 
 enum{

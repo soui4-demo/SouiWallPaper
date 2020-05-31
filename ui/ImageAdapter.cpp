@@ -1,6 +1,6 @@
 #include "StdAfx.h"
 #include "ImageAdapter.h"
-
+#include <helper/STime.h>
 CImageAdapter::CImageAdapter(void):m_category(-1)
 {
 }
@@ -38,8 +38,8 @@ void CImageAdapter::getView(int position, SWindow * pItem, pugi::xml_node xmlTem
 			URL2IMGMAP::iterator it2 = m_imgMap.find(imgInfo.uriThumb);
 			if(it2 == m_imgMap.end())
 			{//download the image
-				CHttpDownloader::getSingletonPtr()->download(imgInfo.uriThumb,URL_IMG,m_category);
 				pImg->SetImage(NULL);
+				CHttpDownloader::getSingletonPtr()->download(imgInfo.uriThumb,URL_IMG,m_category);
 			}else
 			{
 				pImg->SetImage(it2->second);
@@ -93,6 +93,13 @@ void CImageAdapter::OnDownloadFinish(const std::string &uri, const std::string &
 	
 		if(idx!=-1)
 		{
+			m_imgTsMap[STime::GetCurrentTimeMs()]=uri;
+			if(m_imgTsMap.size()>kMaxCache)
+			{
+				string uri = m_imgTsMap.begin()->second;
+				m_imgTsMap.erase(m_imgTsMap.begin());
+				m_imgMap.erase(uri);
+			}
 			idx /= 5;
 			notifyItemDataChanged(idx);
 		}else
