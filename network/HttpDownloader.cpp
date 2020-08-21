@@ -89,7 +89,7 @@ void CHttpDownloader::_download(const std::string & url,long type, long category
 	string strCacheFile = m_strCachePath + "\\" + strUriMd5 + ".cache";
 
 	//check local cache
-	bool bIsNeedDownLoad = true;
+	bool isFoundCache = false;
 	if (type == URL_IMG)
 	{
 		FILE *f = fopen(strCacheFile.c_str(), "rb");
@@ -103,12 +103,12 @@ void CHttpDownloader::_download(const std::string & url,long type, long category
 			data = string(pBuf, nLen);
 			delete[]pBuf;
 			fclose(f);
-			bIsNeedDownLoad = false;
+			isFoundCache = true;
 			SLOG_INFO("load image from cache uri: " << url.c_str());
 		}
 	}
 
-	if(bIsNeedDownLoad)
+	if(!isFoundCache)
 	{
 		// ´ò¿ªhttpÁ´½Ó
 		HINTERNET hConnect = InternetOpen(NULL, INTERNET_OPEN_TYPE_DIRECT, NULL, NULL, 0); 
@@ -146,13 +146,12 @@ void CHttpDownloader::_download(const std::string & url,long type, long category
 		}
 		SLOG_INFO(">>>>> end download "<<url.c_str());
 	}
-	if(m_taskLoops[iLoop]->isRunning())
 	{
-		{
-			SAutoLock lock(m_cs);
-			m_pendingTasks.erase(url);
-		}
+		SAutoLock lock(m_cs);
+		m_pendingTasks.erase(url);
+	}
 
+	{
 		EventDownloadFinish *evt = new EventDownloadFinish(NULL);
 		evt->url = url;
 		evt->data = data;
@@ -161,7 +160,7 @@ void CHttpDownloader::_download(const std::string & url,long type, long category
 		if(type == URL_IMG)
 		{//try to decode image.
 			evt->pImg.Attach(SResLoadFromMemory::LoadImage((LPVOID)data.c_str(),data.size()));
-			if(evt->pImg && bIsNeedDownLoad)
+			if(evt->pImg && !isFoundCache)
 			{
 				FILE *f = fopen(strCacheFile.c_str(), "wb");
 				if (f)

@@ -88,6 +88,13 @@ void CImageAdapter::OnDownloadFinish(const std::string &uri, const std::string &
 	}else
 	{//img
 		m_imgMap[uri] = pImg;
+		m_cacheList.push_back(uri);
+		if(m_cacheList.size()>MAX_CACHE_SIZE)
+		{
+			string discardUri = m_cacheList.front();
+			m_cacheList.pop_front();
+			m_imgMap.erase(discardUri);
+		}
 		int idx = url2index(uri,category);
 		SLOG_WARN("url "<<uri.c_str()<<" index is "<<idx);
 	

@@ -23,10 +23,18 @@ private:
 		string uriThumb;
 		string uriBig;
 	};
-	typedef map<string,CAutoRefPtr<IBitmap> > URL2IMGMAP;
+
+	typedef map<string,SAutoRefPtr<IBitmap> > URL2IMGMAP;
+
 	typedef vector<IMGINFO> IMGS;
 	typedef map<int,IMGS * > DATAMAP;
 	DATAMAP m_dataMap;
 	URL2IMGMAP m_imgMap;
+
+	enum {
+		MAX_CACHE_SIZE = 40
+	};
+	list<string> m_cacheList;
+
 	int    m_category;
 };
