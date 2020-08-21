@@ -38,8 +38,8 @@ void CImageAdapter::getView(int position, SWindow * pItem, pugi::xml_node xmlTem
 			URL2IMGMAP::iterator it2 = m_imgMap.find(imgInfo.uriThumb);
 			if(it2 == m_imgMap.end())
 			{//download the image
-				CHttpDownloader::getSingletonPtr()->download(imgInfo.uriThumb,URL_IMG,m_category);
 				pImg->SetImage(NULL);
+				CHttpDownloader::getSingletonPtr()->download(imgInfo.uriThumb,URL_IMG,m_category);
 			}else
 			{
 				pImg->SetImage(it2->second);
