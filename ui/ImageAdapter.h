@@ -10,9 +10,9 @@ public:
 	void setCategory(int nCategory);
 	void OnDownloadFinish(const std::string &uri, const std::string &data, long type, long category, IBitmap * pImg);
 protected:
-	virtual int getCount();
+	STDMETHOD_(int, getCount)() override;
 
-	virtual void getView(int position, SWindow * pItem, pugi::xml_node xmlTemplate);
+	STDMETHOD_(void, getView)(int position, SItemPanel *pItem, SXmlNode xmlTemplate);
 
 private:
 	int url2index(const string &url,int category) const;

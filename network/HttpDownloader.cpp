@@ -4,6 +4,7 @@
 #include <WinInet.h>
 #pragma comment(lib, "WinInet.lib")
 #include "MD5.h"
+#define kLogTag "CHttpDownloader"
 
 template<>
 CHttpDownloader * SSingleton<CHttpDownloader>::ms_Singleton = NULL;
@@ -24,7 +25,7 @@ CHttpDownloader::CHttpDownloader(void)
 		m_ComMgr.CreateTaskLoop((IObjRef **)&m_taskLoops[i]);
 		char szName[30];
 		sprintf(szName,"downloader_%d",i+1);
-		m_taskLoops[i]->start(szName,ITaskLoop::Low);
+		m_taskLoops[i]->start(szName,Low);
 	}
 }
 
@@ -33,7 +34,7 @@ CHttpDownloader::~CHttpDownloader(void)
 	for(int i=0;i<MAX_DOWNLOADER;i++)
 	{
 		int nPendingTasks = m_taskLoops[i]->getTaskCount();
-		SLOG_INFO("downloader "<<i<<" remain "<<nPendingTasks<<" tasks");
+		SLOGI()<<"downloader "<<i<<" remain "<<nPendingTasks<<" tasks";
 		m_taskLoops[i]->stop();
 		m_taskLoops[i] = NULL;
 	}
@@ -81,7 +82,7 @@ string CHttpDownloader::uri2md5(const string & uri)
 
 void CHttpDownloader::_download(const std::string & url,long type, long category,int iLoop)
 {
-	SLOG_INFO("_download, url:"<<url.c_str()<<" type:"<<type<<" category");
+	SLOGI()<<"_download, url:"<<url.c_str()<<" type:"<<type<<" category";
 
 	string data;
 
@@ -104,7 +105,7 @@ void CHttpDownloader::_download(const std::string & url,long type, long category
 			delete[]pBuf;
 			fclose(f);
 			isFoundCache = true;
-			SLOG_INFO("load image from cache uri: " << url.c_str());
+			SLOGI()<<"load image from cache uri: " << url.c_str();
 		}
 	}
 
@@ -113,7 +114,7 @@ void CHttpDownloader::_download(const std::string & url,long type, long category
 		// ´ò¿ªhttpÁ´½Ó
 		HINTERNET hConnect = InternetOpen(NULL, INTERNET_OPEN_TYPE_DIRECT, NULL, NULL, 0); 
 
-		SLOG_INFO("<<<<<start download "<<url.c_str());
+		SLOGI()<<"<<<<<start download "<<url.c_str();
 		if (hConnect)
 		{
 			DWORD dwTimeOut = 0;
@@ -144,7 +145,7 @@ void CHttpDownloader::_download(const std::string & url,long type, long category
 			InternetCloseHandle(hConnect);
 
 		}
-		SLOG_INFO(">>>>> end download "<<url.c_str());
+		SLOGI()<<">>>>> end download "<<url.c_str();
 	}
 	{
 		SAutoLock lock(m_cs);
@@ -171,7 +172,7 @@ void CHttpDownloader::_download(const std::string & url,long type, long category
 			}
 		}else
 		{
-			SLOG_INFO("download form "<<url.c_str()<<" result:"<<data.c_str());
+			SLOGI()<<"download form "<<url.c_str()<<" result:"<<data.c_str();
 		}
 		SNotifyCenter::getSingletonPtr()->FireEventAsync(evt);
 		evt->Release();

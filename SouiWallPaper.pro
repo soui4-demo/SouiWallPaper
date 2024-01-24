@@ -6,15 +6,15 @@ TARGET = SouiWallPaper
 CONFIG(x64){
 TARGET = $$TARGET"64"
 }
-include($$(SOUI3PATH)/demo_com.pri)
+include($$(SOUI4PATH)/demo_com.pri)
 
-INCLUDEPATH += $(SOUI3PATH)/third-part/jsoncpp/include
+INCLUDEPATH += $(SOUI4PATH)/third-part/jsoncpp/include
 
 CONFIG(debug,debug|release){
-	LIBS += utilitiesd.lib soui3d.lib jsoncppd.lib
+	LIBS += utilities4d.lib soui4d.lib jsoncppd.lib
 }
 else{
-	LIBS += utilities.lib soui3.lib jsoncpp.lib
+	LIBS += utilities4.lib soui4.lib jsoncpp.lib
 }
 
 PRECOMPILED_HEADER = stdafx.h

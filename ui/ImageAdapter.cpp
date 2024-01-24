@@ -1,5 +1,6 @@
 #include "StdAfx.h"
 #include "ImageAdapter.h"
+#define kLogTag "CImageAdapter"
 
 CImageAdapter::CImageAdapter(void):m_category(-1)
 {
@@ -18,11 +19,11 @@ int CImageAdapter::getCount()
 		return (it->second->size()+4)/5;
 }
 
-void CImageAdapter::getView(int position, SWindow * pItem, pugi::xml_node xmlTemplate)
+void CImageAdapter::getView(int position, SItemPanel * pItem, SXmlNode xmlTemplate)
 {
 	if(pItem->GetChildrenCount()==0)
 	{
-		pItem->InitFromXml(xmlTemplate);
+		pItem->InitFromXml(&xmlTemplate);
 	}
 
 	DATAMAP::iterator it = m_dataMap.find(m_category);
@@ -82,7 +83,7 @@ void CImageAdapter::OnDownloadFinish(const std::string &uri, const std::string &
 				notifyDataSetChanged();
 			}else
 			{
-				SLOG_ERROR("fatch categories error code:"<<value["error"].asString().c_str());
+				SLOGE()<<"fatch categories error code:"<<value["error"].asString().c_str();
 			}
 		}
 	}else
@@ -96,7 +97,7 @@ void CImageAdapter::OnDownloadFinish(const std::string &uri, const std::string &
 			m_imgMap.erase(discardUri);
 		}
 		int idx = url2index(uri,category);
-		SLOG_WARN("url "<<uri.c_str()<<" index is "<<idx);
+		SLOGW()<<"url "<<uri.c_str()<<" index is "<<idx;
 	
 		if(idx!=-1)
 		{
@@ -104,7 +105,7 @@ void CImageAdapter::OnDownloadFinish(const std::string &uri, const std::string &
 			notifyItemDataChanged(idx);
 		}else
 		{
-			SLOG_WARN("url "<<uri.c_str()<<" index is -1");
+			SLOGW()<<"url "<<uri.c_str()<<" index is -1";
 		}
 	}
 }

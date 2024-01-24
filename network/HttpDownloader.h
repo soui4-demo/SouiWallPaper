@@ -6,13 +6,14 @@
 #define MAX_DOWNLOADER 10
 
 
-SEVENT_BEGIN(EventDownloadFinish,EVT_DOWNLOAD_FINISH)
+DEF_EVT_EXT(EventDownloadFinish,EVT_DOWNLOAD_FINISH,{
 	std::string url;
 	std::string data;
 	long   type;
 	long   catetory;
 	SAutoRefPtr<IBitmap> pImg;
-SEVENT_END()
+}
+)
 
 enum{
 	URL_CATEGORIES=1,
